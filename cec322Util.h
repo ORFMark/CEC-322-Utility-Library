@@ -17,12 +17,10 @@
 inline void delay(uint32_t milliseconds);
 void blinky(void);
 void initBlinky(void);
-void UARTConsolePrint(const char* printable, uint32_t size);
-void initDisplay(tContext *sContext);
 void printMenu(const char* userToggles, uint8_t* sizes, 
                const uint8_t numberOfPrompts);
 void processMenuPolled(uint8_t *decisionBits);
 void printSplashText(tContext* sContext);
-void configureUART();
+
 
 #endif /* CEC322UTIL_H_ */

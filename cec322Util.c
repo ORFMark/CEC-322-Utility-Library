@@ -15,6 +15,7 @@
 #include "drivers/cfal96x64x16.h"
 #include "drivers/buttons.h"
 #include "mrbUtil/cec322Util.h"
+#include "mrbUtil/cec322Peripherals.h"
 
 /*
 * Function Name: delay
@@ -60,39 +61,6 @@ void initBlinky(void) {
   GPIOPinTypeGPIOOutput(GPIO_PORTG_BASE, GPIO_PIN_2); 
 }
 
-/*
-* Function Name: UARTConsolePrint
-* Purpose: Prints a given string to the console
-* Inputs: The string to be printed and it's length. 
-* Outputs: None
-* Notes: Sends proper C strings to the UART in case they are being fed to 
-*       another program
-*/
-void UARTConsolePrint(const char* printable, uint32_t size) {
-  uint8_t *pui8Buffer; 
-  pui8Buffer = (uint8_t*) printable;
-  while(size-- && (*pui8Buffer) != '\0')
-  {
-    UARTCharPut(UART0_BASE, *pui8Buffer++);
-  }
-  UARTCharPut(UART0_BASE, '\0');
-}
-
-/*
-* Function Name: initDisplay
-* Purpose: initializes the OLED display
-* Inputs: a pointer to a screem
-* Outputs: none
-* Notes: none
-*/
-void initDisplay(tContext *sContext) {
-
-  // Initialize the display driver.
-  CFAL96x64x16Init(); 
-  
-  // Initialize the graphics context and find the middle X coordinate.
-  GrContextInit(sContext, &g_sCFAL96x64x16); 
-}
 
 /*
 * Function Name: printMenu
@@ -105,20 +73,23 @@ void printMenu(const char* userToggles, uint8_t* sizes,
                const uint8_t numberOfPrompts) {
   uint8_t counter = 0;
   char* printables[4][32];
+  /*
   if (numberOfPrompts > 0) {
     for(counter = 0; counter < numberOfPrompts; counter++) {
-      sprintf(printables[counter], "%d: %s", counter, userToggles[counter]);
+      sprintf(printables[counter], "%d: %s", counter+1, (char*)userToggles[counter]);
     }
   }
+  */
   UARTConsolePrint("Enter the letter to preform the desired function.\n\r", 51
                    );
   UARTConsolePrint("b: toggle blinky operation\n\r", 29);
   UARTConsolePrint("s: Print the Splash\n\r", 22);
   UARTConsolePrint("m: print this menue\n\r", 22);
   UARTConsolePrint("c: clear the screen\n\r", 22);
+  /*
   for(counter = 0; counter < numberOfPrompts; counter++) {
     UARTConsolePrint((char*)printables[counter], sizes[counter]+3);
-  }
+  } */
   UARTConsolePrint("q: quit this program\n\r", 24);
 }
 
@@ -204,20 +175,4 @@ void printSplashText(tContext* sContext) {
   GrContextForegroundSet(sContext, ClrBlack);
   GrRectFill(sContext, &sRect);
   /*end OLED*/
-}
-/*
-* Function Name:configureUART
-* Purpose: configures the UART at 115200 Baud
-* Inputs: None
-* Outputs: None
-* Notes: Must be called before any UART functions can be used. 
-*/
-void configureUART() {
-  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-  SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-  GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
-  
-  UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200,
-                      (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
-                       UART_CONFIG_PAR_NONE));
 }

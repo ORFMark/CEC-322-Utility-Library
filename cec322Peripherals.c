@@ -14,7 +14,6 @@
 #include "utils/uartstdio.h"
 #include "drivers/cfal96x64x16.h"
 #include "drivers/buttons.h"
-#include "mrbUtil/cec322Util.h"
 #include "mrbUtil/cec322Peripherals.h"
 
 /*
@@ -33,6 +32,7 @@ void UARTConsolePrint(const char* printable, uint32_t size) {
     UARTCharPut(UART0_BASE, *pui8Buffer++);
   }
   UARTCharPut(UART0_BASE, '\0');
+
 }
 
 /*
