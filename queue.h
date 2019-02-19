@@ -1,8 +1,10 @@
 /*
- * queue.h
- *
- *  Created on: Feb 19, 2019
- *      Author: Mark
+ * File: queue.h
+ * Project: Header Library  development for CEC320
+ * Author: Mark Burrell
+ * Version: 1.0 Tuesday February 19, 2019
+ * Copywrite (c) 2019 Mark Burrell, all rights reserved
+ * Repository: https://github.com/ORFMark/CEC-322-Utility-Library
  */
 
 #ifndef QUEUE_H_
