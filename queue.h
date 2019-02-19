@@ -7,8 +7,8 @@
  * Repository: https://github.com/ORFMark/CEC-322-Utility-Library
  */
 
-#ifndef QUEUE_H_
-#define QUEUE_H_
+#ifndef MRBUTIL_QUEUE_H_
+#define MRBUTIL_QUEUE_H_
 
 
 typedef struct node{
@@ -27,4 +27,4 @@ void enqueue(Queue* myQueue, char data);
 char peek(Queue* myQueue);
 char dequeue(Queue* myQueue);
 
-#endif /* QUEUE_H_ */
+#endif /* MRBUTIL_QUEUE_H_ */

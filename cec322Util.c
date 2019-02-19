@@ -39,9 +39,9 @@ inline void delay(uint32_t milliseconds) {
 */
 void blinky(void) {
   GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2); //LED on
-  delay(20);
+  delay(BLINKY_LENGTH);
   GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0); //LED off
-  delay(20);
+  delay(BLINKY_LENGTH);
 }
 
 /*
@@ -69,27 +69,27 @@ void initBlinky(void) {
 * Outputs: none
 * Notes: Contains 4 slots for user-driven input. 
 */
-void printMenu(const char* userToggles, uint8_t* sizes, 
+void printMenu(const char** userToggles, uint8_t* sizes, 
                const uint8_t numberOfPrompts) {
   uint8_t counter = 0;
   char* printables[4][32];
-  /*
+  
   if (numberOfPrompts > 0) {
     for(counter = 0; counter < numberOfPrompts; counter++) {
       sprintf(printables[counter], "%d: %s", counter+1, (char*)userToggles[counter]);
     }
   }
-  */
+  
   UARTConsolePrint("Enter the letter to preform the desired function.\n\r", 51
                    );
   UARTConsolePrint("b: toggle blinky operation\n\r", 29);
   UARTConsolePrint("s: Print the Splash\n\r", 22);
   UARTConsolePrint("m: print this menue\n\r", 22);
   UARTConsolePrint("c: clear the screen\n\r", 22);
-  /*
+  
   for(counter = 0; counter < numberOfPrompts; counter++) {
     UARTConsolePrint((char*)printables[counter], sizes[counter]+3);
-  } */
+  } 
   UARTConsolePrint("q: quit this program\n\r", 24);
 }
 
@@ -143,6 +143,40 @@ void processMenuPolled(uint8_t *decisionBits) {
   
 }
 
+void processMenuChar(uint8_t *decisionBits, uint8_t localChar) {
+      switch (localchar) {
+      case 'b':
+        *(decisionBits) ^= ENABLE_BLINKY;
+        break;
+       case 's':
+        *(decisionBits) ^= DISPLAY_SPLASH;
+        break;
+        case 'c':
+        *(decisionBits) ^= SCREEN_CLEAR;
+        break;
+        case 'm':
+        *(decisionBits) ^= PRINT_MENU;
+        break;
+        case '1':
+        *(decisionBits) ^= USER_TOGGLE_1;
+        break;
+        case '2':
+        *(decisionBits) ^= USER_TOGGLE_2;
+        break;
+        case '3':
+        *(decisionBits) ^= USER_TOGGLE_3;
+        break;
+        case '4':
+        *(decisionBits) ^= USER_TOGGLE_4;
+        break;
+        case 'q':
+        *(decisionBits) = 0x00;
+        break;
+      }
+    }
+  }
+  
+}
 /*
 * Function Name: printSplashText
 * Purpose: prints out the splash screen. 
@@ -167,7 +201,7 @@ void printSplashText(tContext* sContext) {
                ((GrContextDpyHeightGet(sContext) - 24) / 2) + -12,
                1);
   GrFlush(sContext);
-  delay(10000);
+  delay(SPLASH_LENGTH);
   sRect.i16XMin = 0;
   sRect.i16YMin = 0;
   sRect.i16XMax = GrContextDpyWidthGet(sContext) - 1;
