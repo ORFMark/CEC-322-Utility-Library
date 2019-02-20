@@ -128,11 +128,8 @@ void processMenuPolled(uint8_t *decisionBits) {
         case '3':
         *(decisionBits) ^= USER_TOGGLE_3;
         break;
-        case '4':
-        *(decisionBits) ^= USER_TOGGLE_4;
-        break;
         case 'q':
-        *(decisionBits) = 0x00;
+        *(decisionBits) = 0x0;
         break;
       default: {
         UARTConsolePrint("INVALID COMMAND", 16); 
@@ -143,8 +140,8 @@ void processMenuPolled(uint8_t *decisionBits) {
   
 }
 
-void processMenuChar(uint8_t *decisionBits, uint8_t localChar) {
-      switch (localchar) {
+void processMenuChar(uint8_t *decisionBits, uint32_t localChar) {
+      switch (localChar) {
       case 'b':
         *(decisionBits) ^= ENABLE_BLINKY;
         break;
@@ -166,15 +163,10 @@ void processMenuChar(uint8_t *decisionBits, uint8_t localChar) {
         case '3':
         *(decisionBits) ^= USER_TOGGLE_3;
         break;
-        case '4':
-        *(decisionBits) ^= USER_TOGGLE_4;
-        break;
         case 'q':
-        *(decisionBits) = 0x00;
+        *(decisionBits) ^= QUIT;
         break;
       }
-    }
-  }
   
 }
 /*

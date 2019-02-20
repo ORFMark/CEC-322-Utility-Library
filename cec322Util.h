@@ -26,8 +26,7 @@
 #define USER_TOGGLE_1  0x08
 #define USER_TOGGLE_2  0x04
 #define USER_TOGGLE_3  0x02
-#define USER_TOGGLE_4  0x01
-#define QUIT           0x00
+#define QUIT           0x01
 #define START_STATE    0x80
 #define BLINKY_LENGTH 20
 #define SPLASH_LENGTH 1000
@@ -38,7 +37,7 @@ void initBlinky(void);
 void printMenu(const char** userToggles, uint8_t* sizes, 
                const uint8_t numberOfPrompts);
 void processMenuPolled(uint8_t *decisionBits);
-void processMenuChar(uint8_t *decisionBits, uint8_t localChar);
+void processMenuChar(uint8_t *decisionBits, uint32_t localChar);
 void printSplashText(tContext* sContext);
 
 
