@@ -25,6 +25,7 @@ typedef struct{
 	queueNode* head;
 	queueNode* tail;
         uint8_t allocatedNodes;
+        uint32_t lastProcessed;
         queueNode memSpace[QUEUESIZE];
 } Queue;
 

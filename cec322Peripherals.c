@@ -10,11 +10,12 @@
 #include "driverlib/uart.h"
 #include "driverlib/rom.h"
 #include "driverlib/adc.h"
+#include "driverlib/comp.h"
 #include "grlib/grlib.h"
 #include "utils/uartstdio.h"
 #include "drivers/cfal96x64x16.h"
 #include "drivers/buttons.h"
-#include "mrbUtil/cec322Peripherals.h"
+#include "mrbUtil/cec322peripherals.h"
 
 /*
 * Function Name: UARTConsolePrint
@@ -32,7 +33,7 @@ void UARTConsolePrint(const char* printable, uint32_t size) {
     UARTCharPut(UART0_BASE, *pui8Buffer++);
   }
   UARTCharPut(UART0_BASE, '\0');
-
+  
 }
 
 /*
@@ -43,14 +44,32 @@ void UARTConsolePrint(const char* printable, uint32_t size) {
 * Notes: none
 */
 void initDisplay(tContext *sContext) {
-
+  
   // Initialize the display driver.
   CFAL96x64x16Init(); 
   
   // Initialize the graphics context and find the middle X coordinate.
   GrContextInit(sContext, &g_sCFAL96x64x16); 
 }
-
+/*
+* Function Name: clearDisplay
+* Purpose: clears the OLED for writing
+* Inputs: a pointer to a screem
+* Outputs: none
+* Notes: none
+*/
+void clearDisplay(tContext* sContext, bool preserveBanner) {
+  tRectangle sRect;
+  sRect.i16XMin = 0;
+  if (preserveBanner)
+    sRect.i16YMin = 9;
+  else 
+    sRect.i16YMin = 0;
+  sRect.i16XMax = GrContextDpyWidthGet(sContext) - 1;
+  sRect.i16YMax = GrContextDpyHeightGet(sContext)-1;
+  GrContextForegroundSet(sContext, ClrBlack);
+  GrRectFill(sContext, &sRect);
+}
 /*
 * Function Name:configureUART
 * Purpose: configures the UART at 115200 Baud
@@ -79,10 +98,31 @@ void configureADC(uint32_t ADC_Base, uint32_t sequenceNum, uint32_t channel, uin
 }
 
 void getADCData(uint32_t ADC_Base, uint32_t sequenceNum, uint32_t* squenceArray) {
-	ADCProcessorTrigger(ADC_Base, sequenceNum);
+  ADCProcessorTrigger(ADC_Base, sequenceNum);
   while(!ADCIntStatus(ADC_Base, sequenceNum, false))
   {
   };
   ADCIntClear(ADC_Base, sequenceNum);
   ADCSequenceDataGet(ADC_Base, sequenceNum, squenceArray);
 }
+
+void initComparator() {
+   // Turn on peripheral
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_COMP0);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
+
+    // Wait for peripheral to be turn on
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_COMP0) ||
+                !SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOC));
+
+    // Configuring the internal reference for the comparator to 1.65V
+    ComparatorRefSet(COMP_BASE, COMP_REF_1_65V);
+
+    // Configuring comparator
+    ComparatorConfigure(COMP_BASE, 0, COMP_TRIG_NONE | COMP_INT_BOTH |
+                        COMP_ASRCP_REF | COMP_OUTPUT_NORMAL);
+
+    // Assigning pin for comparitor
+    GPIOPinTypeComparator(GPIO_PORTC_BASE, GPIO_PIN_7);
+}
+  

@@ -39,7 +39,7 @@ inline void delay(uint32_t milliseconds) {
 */
 void blinky(void) {
   GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2); //LED on
-  delay(BLINKY_LENGTH);
+  delay(BLINKY_LENGTH/4);
   GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0); //LED off
   delay(BLINKY_LENGTH);
 }
@@ -178,14 +178,7 @@ void processMenuChar(uint8_t *decisionBits, uint32_t localChar) {
 */
 void printSplashText(tContext* sContext) {
   /*Begin OLED print*/
-  tRectangle sRect;
-  sRect.i16XMin = 0;
-  sRect.i16YMin = 0;
-  sRect.i16XMax = GrContextDpyWidthGet(sContext)-1;
-  sRect.i16YMax = GrContextDpyHeightGet(sContext)-1;
-  GrContextForegroundSet(sContext, ClrBlack);
-  
-  GrRectFill(sContext, &sRect);
+  clearDisplay(sContext, false);
   GrContextForegroundSet(sContext, ClrWhite);
   GrContextFontSet(sContext, g_psFontCm12/*g_psFontFixed6x8*/);
   GrStringDraw(sContext, "MRB_DG_CEC322_Lab4_v1", -1,
@@ -194,11 +187,6 @@ void printSplashText(tContext* sContext) {
                1);
   GrFlush(sContext);
   delay(SPLASH_LENGTH);
-  sRect.i16XMin = 0;
-  sRect.i16YMin = 0;
-  sRect.i16XMax = GrContextDpyWidthGet(sContext) - 1;
-  sRect.i16YMax = GrContextDpyHeightGet(sContext) - 1;
-  GrContextForegroundSet(sContext, ClrBlack);
-  GrRectFill(sContext, &sRect);
+  clearDisplay(sContext, false);
   /*end OLED*/
 }

@@ -12,8 +12,10 @@
 
 queueNode* myMalloc(Queue* myQueue) {
   if(myQueue->allocatedNodes < QUEUESIZE) {
-    return &(myQueue->memSpace[myQueue->allocatedNodes++]);
     
+    queueNode* node = &(myQueue->memSpace[myQueue->allocatedNodes]);
+    myQueue->allocatedNodes = (myQueue->allocatedNodes + 1) % QUEUESIZE;
+    return node;
   }
   else {
     return 0;
@@ -97,9 +99,9 @@ queueNode* myMalloc(Queue* myQueue) {
   uint32_t dequeue(Queue* myQueue) {
     uint32_t data = '\0';
     if(myQueue->head != 0 && myQueue->allocatedNodes != 0) {
-      data = myQueue->head->data;
+      myQueue->lastProcessed  = myQueue->head->data;
+      data = myQueue->lastProcessed;
       myQueue->head = myQueue->head->next;
-      myQueue->allocatedNodes--;
       if(myQueue->head == 0) {
         myQueue->tail = 0;
       }
