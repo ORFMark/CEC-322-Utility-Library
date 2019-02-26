@@ -140,6 +140,14 @@ void processMenuPolled(uint8_t *decisionBits) {
   
 }
 
+/*
+* Function Name: processMenuChar
+* Purpose: processing of a single character through the menu options to control
+           a 8bit toggle vector
+* Inputs:8 bit vector of toggles
+* Outputs: none
+* Notes: none 
+*/
 void processMenuChar(uint8_t *decisionBits, uint32_t localChar) {
       switch (localChar) {
       case 'b':
@@ -190,3 +198,4 @@ void printSplashText(tContext* sContext) {
   clearDisplay(sContext, false);
   /*end OLED*/
 }
+

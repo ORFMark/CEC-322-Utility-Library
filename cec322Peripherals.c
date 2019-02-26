@@ -87,6 +87,14 @@ void configureUART() {
                        UART_CONFIG_PAR_NONE));
 }
 
+/*
+* Function Name:configureADC
+* Purpose: Configures the ADC to read data into the given channel and sequence 
+           from the given pin
+* Inputs: ADC base, Sequece, Channel, location
+* Outputs: None
+* Notes: Must be called before any ADC functions can be used. 
+*/
 void configureADC(uint32_t ADC_Base, uint32_t sequenceNum, uint32_t channel, uint32_t pin) {
   GPIOPinTypeADC(GPIO_PORTD_BASE, pin);
   ADCSequenceDisable(ADC_Base, sequenceNum);
@@ -96,7 +104,13 @@ void configureADC(uint32_t ADC_Base, uint32_t sequenceNum, uint32_t channel, uin
   ADCSequenceEnable(ADC_Base, sequenceNum);
   ADCIntClear(ADC_Base, sequenceNum);
 }
-
+/*
+* Function Name: getADCData
+* Purpose: gets data from the given ADC and puts it in the given array
+* Inputs: ADC, and the array to place the data in
+* Outputs: None
+* Notes: none
+*/
 void getADCData(uint32_t ADC_Base, uint32_t sequenceNum, uint32_t* squenceArray) {
   ADCProcessorTrigger(ADC_Base, sequenceNum);
   while(!ADCIntStatus(ADC_Base, sequenceNum, false))
@@ -105,7 +119,13 @@ void getADCData(uint32_t ADC_Base, uint32_t sequenceNum, uint32_t* squenceArray)
   ADCIntClear(ADC_Base, sequenceNum);
   ADCSequenceDataGet(ADC_Base, sequenceNum, squenceArray);
 }
-
+/*
+* Function Name: init comparator
+* Purpose: initalize comparator 0 to read data on pin C7
+* Inputs: none
+* Outputs: none
+* Notes: none 
+*/
 void initComparator() {
    // Turn on peripheral
     SysCtlPeripheralEnable(SYSCTL_PERIPH_COMP0);
