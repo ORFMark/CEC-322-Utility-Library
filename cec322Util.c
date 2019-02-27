@@ -38,10 +38,12 @@ inline void delay(uint32_t milliseconds) {
 * Notes: Can be starved, Must call initblinky before use
 */
 void blinky(void) {
-  GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2); //LED on
-  delay(BLINKY_LENGTH/4);
-  GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0); //LED off
-  delay(BLINKY_LENGTH);
+  static uint8_t counter = 0;
+  static bool on = true;
+  if(counter == BLINKY_DELAY) {
+    on = !on;
+  }
+  on == true ? GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2) : GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0);
 }
 
 /*
