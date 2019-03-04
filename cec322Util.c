@@ -16,6 +16,8 @@
 #include "drivers/buttons.h"
 #include "mrbUtil/cec322Util.h"
 #include "mrbUtil/cec322Peripherals.h"
+#define BLINKY_DELAY 100
+#define BLINKY_DELAY_OVER_4  25
 
 /*
 * Function Name: delay
@@ -39,11 +41,14 @@ inline void delay(uint32_t milliseconds) {
 */
 void blinky(void) {
   static uint8_t counter = 0;
-  static bool on = true;
-  if(counter == BLINKY_DELAY) {
-    on = !on;
-  }
-  on == true ? GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2) : GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0);
+  static bool enableLED = true;
+  counter++;
+   if(counter == BLINKY_DELAY) {
+    enableLED = !enableLED;
+    enableLED == true ? GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2) : GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0);
+    counter = 0;
+   }
+  
 }
 
 /*
@@ -61,6 +66,7 @@ void initBlinky(void) {
   //Enable the GPIO Pin for the LED, set it to output, 
   //and enable the pin for digital Function
   GPIOPinTypeGPIOOutput(GPIO_PORTG_BASE, GPIO_PIN_2); 
+
 }
 
 

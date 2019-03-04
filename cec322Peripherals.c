@@ -37,6 +37,20 @@ void UARTConsolePrint(const char* printable, uint32_t size) {
 }
 
 /*
+* Function Name: UARTConsolePrint
+* Purpose: Prints a given string to the console
+* Inputs: The string to be printed
+* Outputs: None
+* Notes: Sends in improper string across the serial interface. Not safe to feed
+*        other programs. Developed from UARTSend function from CJ Long
+*/
+void UARTPrint(const char* printable) {
+  uint8_t *pui8Buffer = (uint8_t*) printable;
+  while (*pui8Buffer != '\0') {
+    UARTCharPut(UART0_Base, *pui8Buffer++);
+  }
+}
+/*
 * Function Name: initDisplay
 * Purpose: initializes the OLED display
 * Inputs: a pointer to a screem
@@ -145,4 +159,18 @@ void initComparator() {
     // Assigning pin for comparitor
     GPIOPinTypeComparator(GPIO_PORTC_BASE, GPIO_PIN_7);
 }
+
+void ButtonsConfigure(){
+  SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOM);
+  while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOM))
+  {
+  }
+  GPIODirModeSet(GPIO_PORTM_BASE, BUTTON_LIST, GPIO_DIR_MODE_IN);
+  GPIOPadConfigSet(GPIO_PORTM_BASE, BUTTON_LIST,
+                   GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+  GPIOIntTypeSet(GPIO_PORTM_BASE, BUTTON_LIST, GPIO_FALLING_EDGE);
+  GPIOIntEnable(GPIO_PORTM_BASE, BUTTON_LIST);
+  IntEnable(INT_GPIOM);
+}
+
   
