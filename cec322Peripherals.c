@@ -47,7 +47,7 @@ void UARTConsolePrint(const char* printable, uint32_t size) {
 void UARTPrint(const char* printable) {
   uint8_t *pui8Buffer = (uint8_t*) printable;
   while (*pui8Buffer != '\0') {
-    UARTCharPut(UART0_Base, *pui8Buffer++);
+    UARTCharPut(UART0_BASE, *pui8Buffer++);
   }
 }
 /*
@@ -165,11 +165,11 @@ void ButtonsConfigure(){
   while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOM))
   {
   }
-  GPIODirModeSet(GPIO_PORTM_BASE, BUTTON_LIST, GPIO_DIR_MODE_IN);
-  GPIOPadConfigSet(GPIO_PORTM_BASE, BUTTON_LIST,
+  GPIODirModeSet(GPIO_PORTM_BASE, ALL_BUTTONS, GPIO_DIR_MODE_IN);
+  GPIOPadConfigSet(GPIO_PORTM_BASE, ALL_BUTTONS,
                    GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
-  GPIOIntTypeSet(GPIO_PORTM_BASE, BUTTON_LIST, GPIO_FALLING_EDGE);
-  GPIOIntEnable(GPIO_PORTM_BASE, BUTTON_LIST);
+  GPIOIntTypeSet(GPIO_PORTM_BASE, ALL_BUTTONS, GPIO_FALLING_EDGE);
+  GPIOIntEnable(GPIO_PORTM_BASE, ALL_BUTTONS);
   IntEnable(INT_GPIOM);
 }
 
