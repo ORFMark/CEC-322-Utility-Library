@@ -23,7 +23,7 @@
 * Inputs: The string to be printed and it's length. 
 * Outputs: None
 * Notes: Sends proper C strings to the UART in case they are being fed to 
-*       another program
+*       another program.
 */
 void UARTConsolePrint(const char* printable, uint32_t size) {
   uint8_t *pui8Buffer; 
@@ -159,7 +159,13 @@ void initComparator() {
     // Assigning pin for comparitor
     GPIOPinTypeComparator(GPIO_PORTC_BASE, GPIO_PIN_7);
 }
-
+/*
+* Function Name: buttonsConfigure
+* Purpose: Configure the buttons to be read
+* Inputs: none
+* Outputs: none
+* Notes: Configures them to allow interrupts. 
+*/
 void ButtonsConfigure(){
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOM);
   while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOM))

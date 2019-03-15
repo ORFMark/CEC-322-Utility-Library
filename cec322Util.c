@@ -137,7 +137,7 @@ void processMenuPolled(uint8_t *decisionBits) {
         *(decisionBits) ^= USER_TOGGLE_3;
         break;
         case 'q':
-        *(decisionBits) = 0x0;
+        *(decisionBits) = 0x00;
         break;
       default: {
         UARTConsolePrint("INVALID COMMAND", 16); 
