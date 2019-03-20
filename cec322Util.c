@@ -16,7 +16,7 @@
 #include "drivers/buttons.h"
 #include "mrbUtil/cec322Util.h"
 #include "mrbUtil/cec322Peripherals.h"
-#define BLINKY_DELAY 100
+#define BLINKY_DELAY 1000
 #define BLINKY_DELAY_OVER_4  25
 
 /*
@@ -40,7 +40,7 @@ inline void delay(uint32_t milliseconds) {
 * Notes: Can be starved, Must call initblinky before use
 */
 void blinky(void) {
-  static uint8_t counter = 0;
+  static uint16_t counter = 0;
   static bool enableLED = true;
   counter++;
    if(counter == BLINKY_DELAY) {
@@ -92,11 +92,12 @@ void printMenu(const char** userToggles, uint8_t* sizes,
                    );
   UARTConsolePrint("b: toggle blinky operation\n\r", 29);
   UARTConsolePrint("s: Print the Splash\n\r", 22);
-  UARTConsolePrint("m: print this menue\n\r", 22);
+  UARTConsolePrint("m: print this menu\n\r", 22);
   UARTConsolePrint("c: clear the screen\n\r", 22);
   
   for(counter = 0; counter < numberOfPrompts; counter++) {
     UARTConsolePrint((char*)printables[counter], sizes[counter]+3);
+    UARTConsolePrint("\n\r", 2);
   } 
   UARTConsolePrint("q: quit this program\n\r", 24);
 }
