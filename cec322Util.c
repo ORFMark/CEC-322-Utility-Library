@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <math.h> 
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
 #include "driverlib/debug.h"
@@ -16,8 +17,8 @@
 #include "drivers/buttons.h"
 #include "mrbUtil/cec322Util.h"
 #include "mrbUtil/cec322Peripherals.h"
-#define BLINKY_DELAY 1000
-#define BLINKY_DELAY_OVER_4  25
+#define BLINKY_DELAY 5
+#define BLINKY_DELAY_90  90000
 
 /*
 * Function Name: delay
@@ -26,7 +27,7 @@
 * Outputs: None
 * Notes: Only approximate, will be thrown off by ISRs
 */
-inline void delay(uint32_t milliseconds) {
+void delay(uint32_t milliseconds) {
  //Uses the ROM version to increae accuracy. Each loop cycle takes three CPU
  //Cycles to execute. 
  ROM_SysCtlDelay((SysCtlClockGet() * milliseconds )/3000); 
@@ -40,14 +41,16 @@ inline void delay(uint32_t milliseconds) {
 * Notes: Can be starved, Must call initblinky before use
 */
 void blinky(void) {
-  static uint16_t counter = 0;
+  static uint32_t counter = 0;
   static bool enableLED = true;
   counter++;
    if(counter == BLINKY_DELAY) {
     enableLED = !enableLED;
-    enableLED == true ? GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2) : GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0);
     counter = 0;
    }
+   enableLED == true ? GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, GPIO_PIN_2)
+     : killBlinky();
+    
   
 }
 
@@ -69,13 +72,24 @@ void initBlinky(void) {
 
 }
 
+/*
+* Function Name: killBlinky
+* Purpose: turn off the heartbeat LED.
+* Inputs: none
+* Outputs: none
+* Notes: none
+*/
+void killBlinky(void) {
+    GPIOPinWrite(GPIO_PORTG_BASE, GPIO_PIN_2, 0);
+}
+
 
 /*
 * Function Name: printMenu
 * Purpose: prints the Menu to the UART
 * Inputs: array of strings, an array of their lengths, and the array lengths
 * Outputs: none
-* Notes: Contains 4 slots for user-driven input. 
+* Notes: Contains 3 slots for user-driven input. 
 */
 void printMenu(const char** userToggles, uint8_t* sizes, 
                const uint8_t numberOfPrompts) {
@@ -118,6 +132,7 @@ void processMenuPolled(uint8_t *decisionBits) {
       switch (local_char) {
       case 'b':
         *(decisionBits) ^= ENABLE_BLINKY;
+        killBlinky();
         break;
        case 's':
         *(decisionBits) ^= DISPLAY_SPLASH;
@@ -161,6 +176,7 @@ void processMenuChar(uint8_t *decisionBits, uint32_t localChar) {
       switch (localChar) {
       case 'b':
         *(decisionBits) ^= ENABLE_BLINKY;
+        killBlinky();
         break;
        case 's':
         *(decisionBits) ^= DISPLAY_SPLASH;
@@ -186,6 +202,7 @@ void processMenuChar(uint8_t *decisionBits, uint32_t localChar) {
       }
   
 }
+
 /*
 * Function Name: printSplashText
 * Purpose: prints out the splash screen. 
@@ -195,7 +212,6 @@ void processMenuChar(uint8_t *decisionBits, uint32_t localChar) {
 */
 void printSplashText(tContext* sContext) {
   /*Begin OLED print*/
-  clearDisplay(sContext, false);
   GrContextForegroundSet(sContext, ClrWhite);
   GrContextFontSet(sContext, g_psFontCm12/*g_psFontFixed6x8*/);
   GrStringDraw(sContext, "MRB_DG_CEC322_Lab4_v1", -1,
@@ -206,5 +222,36 @@ void printSplashText(tContext* sContext) {
   delay(SPLASH_LENGTH);
   clearDisplay(sContext, false);
   /*end OLED*/
+}
+
+/*
+* Function Name: floatToString
+* Purpose: uses the IEEE FLoating point standard to convert a float to a str. 
+* Inputs: a float
+* Outputs: a string representation of the float
+* Notes: Provided by B.T. Davis
+*/
+
+char *floatToString(float x)
+{
+  // Use of static allocation here BAD code style
+  // Functional but quick & dirty use only
+  static char buf[32];
+  int mantissa = (int)(x);
+  int fraction = abs((int)((x - mantissa)*1000));
+  if (fraction > 99)
+  {
+    sprintf(buf, "%d.%d    ", mantissa, fraction);
+  } 
+  else if (fraction > 9)
+  {
+    sprintf(buf, "%d.0%d   ", mantissa, fraction);
+  }
+  else
+  {    
+    sprintf(buf, "%d.00%d  ", mantissa, fraction);
+  }
+  
+  return buf;
 }
 

@@ -27,18 +27,19 @@
 #define USER_TOGGLE_2  0x04
 #define USER_TOGGLE_3  0x02
 #define QUIT           0x01
-#define START_STATE    0x80
+#define START_STATE    0xB0
 #define BLINKY_LENGTH 20
 #define SPLASH_LENGTH 1000
 
-inline void delay(uint32_t milliseconds);
+void delay(uint32_t milliseconds);
 void blinky(void);
 void initBlinky(void);
+void killBlinky(void);
 void printMenu(const char** userToggles, uint8_t* sizes, 
                const uint8_t numberOfPrompts);
 void processMenuPolled(uint8_t *decisionBits);
 void processMenuChar(uint8_t *decisionBits, uint32_t localChar);
 void printSplashText(tContext* sContext);
-
+char* floatToString(float x);
 
 #endif /* CEC322UTIL_H_ */

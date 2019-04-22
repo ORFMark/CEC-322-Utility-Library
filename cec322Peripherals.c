@@ -70,7 +70,7 @@ void initDisplay(tContext *sContext) {
 * Purpose: clears the OLED for writing
 * Inputs: a pointer to a screem
 * Outputs: none
-* Notes: none
+* Notes: Causes flickering when used without a frame buffer
 */
 void clearDisplay(tContext* sContext, bool preserveBanner) {
   tRectangle sRect;
@@ -109,7 +109,8 @@ void configureUART() {
 * Outputs: None
 * Notes: Must be called before any ADC functions can be used. 
 */
-void configureADC(uint32_t ADC_Base, uint32_t sequenceNum, uint32_t channel, uint32_t pin) {
+void configureADC(uint32_t ADC_Base, uint32_t sequenceNum, uint32_t channel
+                  , uint32_t pin) {
   GPIOPinTypeADC(GPIO_PORTD_BASE, pin);
   ADCSequenceDisable(ADC_Base, sequenceNum);
   ADCSequenceConfigure(ADC_Base, sequenceNum, ADC_TRIGGER_PROCESSOR, 0);
@@ -125,7 +126,8 @@ void configureADC(uint32_t ADC_Base, uint32_t sequenceNum, uint32_t channel, uin
 * Outputs: None
 * Notes: none
 */
-void getADCData(uint32_t ADC_Base, uint32_t sequenceNum, uint32_t* squenceArray) {
+void getADCData(uint32_t ADC_Base, uint32_t sequenceNum
+                , uint32_t* squenceArray) {
   ADCProcessorTrigger(ADC_Base, sequenceNum);
   while(!ADCIntStatus(ADC_Base, sequenceNum, false))
   {
@@ -133,6 +135,7 @@ void getADCData(uint32_t ADC_Base, uint32_t sequenceNum, uint32_t* squenceArray)
   ADCIntClear(ADC_Base, sequenceNum);
   ADCSequenceDataGet(ADC_Base, sequenceNum, squenceArray);
 }
+
 /*
 * Function Name: init comparator
 * Purpose: initalize comparator 0 to read data on pin C7
@@ -159,21 +162,26 @@ void initComparator() {
     // Assigning pin for comparitor
     GPIOPinTypeComparator(GPIO_PORTC_BASE, GPIO_PIN_7);
 }
+
 /*
-* Function Name: buttonsConfigure
+* Function Name: configureButtons
 * Purpose: Configure the buttons to be read
 * Inputs: none
 * Outputs: none
 * Notes: Configures them to allow interrupts. 
 */
-void ButtonsConfigure(){
+void configureButtons(){
   SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOM);
   while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOM))
   {
   }
   GPIODirModeSet(GPIO_PORTM_BASE, ALL_BUTTONS, GPIO_DIR_MODE_IN);
+  
+  /* enable pull-up resistors */
   GPIOPadConfigSet(GPIO_PORTM_BASE, ALL_BUTTONS,
                    GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+  
+  /* enable interrupts */
   GPIOIntTypeSet(GPIO_PORTM_BASE, ALL_BUTTONS, GPIO_FALLING_EDGE);
   GPIOIntEnable(GPIO_PORTM_BASE, ALL_BUTTONS);
   IntEnable(INT_GPIOM);
